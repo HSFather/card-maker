@@ -1,14 +1,30 @@
-import React from 'react';
-import Footer from '../footer/footer';
-import Header from '../header/header';
-import styles from './login.module.css';
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import Footer from "../footer/footer";
+import Header from "../header/header";
+import styles from "./login.module.css";
 
 const Login = ({ authService }) => {
-  const onLogin = event => {
+  const navigate = useNavigate();
+  const goToMaker = (userId) => {
+    navigate({
+      pathname: "/maker",
+      state: { id: userId },
+    });
+  };
+
+  const onLogin = (event) => {
     authService //
       .login(event.currentTarget.textContent)
-      .then(console.log);
+      .then((data) => goToMaker(data.user.uid));
   };
+
+  useEffect(() => {
+    authService.onAuthChange((user) => {
+      user && goToMaker(user.id);
+    });
+  });
+
   return (
     <section className={styles.login}>
       <Header />
